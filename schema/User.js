@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const { Schema } = mongoose;
 
 const userSchema = new Schema(
@@ -40,10 +41,12 @@ const userSchema = new Schema(
       },
     },
     phone: {
-      type: String,
+      type: Number,
+      required: true,
     },
     website: {
       type: String,
+      default: "https://google.com",
     },
     company: {
       name: {
@@ -56,9 +59,33 @@ const userSchema = new Schema(
         type: String,
       },
     },
+    password: {
+      type: String,
+      required: true,
+      min: 6,
+      max: 15,
+      default: "123456",
+    },
+    carts: {
+      type: Array,
+    }, // either this or that for seeting an
+    // carts:[]
+    profilePicture: {
+      type: String,
+    },
   },
   {
     timestamps: true,
   }
 );
+userSchema.pre("save", async function (next) {
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, salt);
+    this.password = hashedPassword;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 module.exports = mongoose.model("User", userSchema);
