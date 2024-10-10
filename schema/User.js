@@ -4,6 +4,14 @@ const { Schema } = mongoose;
 
 const userSchema = new Schema(
   {
+    isVerified: {
+      type: Boolean,
+      required: false,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       required: true,

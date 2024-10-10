@@ -4,14 +4,15 @@ const {
   getSingleUser,
   getAllUsers,
   updateUser,
-  Login,
   deleteUser,
+  login,
 } = require("../controller/User");
 const route = express.Router();
 route.get("/", getAllUsers);
 route.post("/", createNewUser);
-route.get("/:id", getSingleUser); //for params
+route.get("/:username", getSingleUser); //for params
 route.put("/:id", updateUser);
-route.post("/login", Login);
+route.post("/logins", login);
 route.delete("/:id", deleteUser);
+
 module.exports = route;
