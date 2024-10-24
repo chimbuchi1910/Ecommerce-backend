@@ -26,11 +26,10 @@ const productSchema = new Schema(
         url: {
           type: String,
         },
-       
       },
     ],
     contactNumber: {
-      type: String,
+      type: Number,
     },
     quantity: {
       type: Number,

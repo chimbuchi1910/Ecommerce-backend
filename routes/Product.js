@@ -4,7 +4,7 @@ const { createNewProduct } = require("../controller/Product");
 const Product = require("../schema/Product");
 const route = express.Router();
 
-route.post("/create", createNewProduct);
+route.post("/", createNewProduct);
 route.get("/", async (req, res) => {
   try {
     const product = await Product.find().sort({ createdAt: -1 });
@@ -39,7 +39,7 @@ route.get("/:id", async (req, res) => {
 });
 route.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, variety } = req.body;
+  const { name, variety } = req.body; /// this serves as your form input field
   try {
     const updateProduct = await Product.findById(id);
     if (!updateProduct) {
@@ -47,8 +47,21 @@ route.put("/:id", async (req, res) => {
         message: "User not found",
       });
     }
+    const uploadImage = await Promise.all(
+      image.map(async (image) => {
+        const result = await cloudinary.uploader.upload(image, {
+          folder: "Products", //optional:store image in a specific folder in Cloudinary
+          resource_type: "image",
+          fileName: `${req.body.name}.jpg`,
+        });
+        return {
+          url: result.secure_url,
+        };
+      })
+    );
     updateProduct.name = name || updateProduct.name;
     updateProduct.variety = variety || updateProduct.variety;
+    updateProduct.image = uploadImage || updateProduct.image;
     await updateProduct.save();
     res.status(200).json({
       message: "Update Successful",
