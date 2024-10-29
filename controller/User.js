@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const User = require("../schema/User");
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -46,7 +46,7 @@ const login = asyncHandler(async (req, res) => {
         message: "Username Not Found",
       });
     }
-    const passwordMatch = await bcrypt.compare(password, loginUser.password);
+    const passwordMatch = await bcryptjs.compare(password, loginUser.password);
     if (!passwordMatch) {
       res.status(500).json({
         message: "Wrong Password",
